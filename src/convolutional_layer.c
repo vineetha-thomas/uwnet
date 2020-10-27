@@ -56,9 +56,78 @@ matrix im2col(image im, int size, int stride)
 
     // TODO: 5.1
     // Fill in the column matrix with patches from the image
+    /* 
+    //VTHOMA- TRIAL1
+    int im_x, im_y, im_c;
+    for(i=0; i<rows; i++)k
+    {
+        for(j=0; j<cols; j++)
+        {
+            im_x = -size/2 + (j/outw)*stride ;
+            im_y = -size/2 + j%outw + i%size;
+            im_c = i/(size*size);
 
+            col.data[i*col.cols + j] = get_pixel(im, im_x, im_y, im_c);
 
+        }
+    }
+    */
 
+    printf("im.w=%d \n", im.w);
+    printf("im.h=%d \n", im.h);
+    printf("size=%d \n", size);
+    printf("stride=%d \n", stride);
+    printf("matrix rows = %d \n", rows);
+    printf("matrix cols = %d \n", cols);  
+    
+    /*
+    //VTHOMA- TRIAL2
+    int mr, mc;
+    int l;
+    int c;
+    for(c=0; c<im.c; c++){
+        for(i=0; i<im.h; i+=stride){
+            for(j=0; j<im.w; j+=stride){
+                mc = (i/stride)*outw + j/stride;
+
+                mr = c*size*size;
+                for(k=-size/2; k<size/2; k++){
+                    for(l=-size/2; l<size/2; l++){
+                        //printf("mr=%d \n", mr);
+                        //printf("mc=%d \n", mc);
+                        if (k+i >0 && l+j>0 && k+i<im.h && l+j<im.w)
+                            col.data[mr*col.cols + mc] = get_pixel(im, k+i, l+j, c); 
+                        else
+                            col.data[mr*col.cols + mc] = 0;
+
+                        mr+=1;
+                    }
+                }
+
+            }
+        }
+        printf("col.data[34] = %f \n", col.data[34]);
+    }
+    */
+
+    //VTHOMA-TRIAL3
+    for(k=0; k<rows; k++){
+        int j_o = k%size;
+        int i_o = (k/size)%size;
+        int im_ch = k/size/size;
+
+        for(i=0; i<outh; i++){
+            for(j=0; j<outw; j++){
+                int im_r = i_o + i*stride;
+                int im_c = j_o + j*stride;
+                if (im_r >0 && im_c>0 && im_r<im.h && im_c<im.w)
+                    col.data[(k*outh + i)*outw + j] = get_pixel(im, im_r, im_c, im_ch);
+                else    
+                    col.data[(k*outh + i)*outw + j] = 0;
+            }
+        }
+    }
+ 
     return col;
 }
 
