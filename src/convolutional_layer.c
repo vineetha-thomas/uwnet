@@ -73,12 +73,12 @@ matrix im2col(image im, int size, int stride)
     }
     */
 
-    printf("im.w=%d \n", im.w);
-    printf("im.h=%d \n", im.h);
-    printf("size=%d \n", size);
-    printf("stride=%d \n", stride);
-    printf("matrix rows = %d \n", rows);
-    printf("matrix cols = %d \n", cols);  
+    // printf("im.w=%d \n", im.w);
+    // printf("im.h=%d \n", im.h);
+    // printf("size=%d \n", size);
+    // printf("stride=%d \n", stride);
+    // printf("matrix rows = %d \n", rows);
+    // printf("matrix cols = %d \n", cols);  
     
     
     //TRIAL2

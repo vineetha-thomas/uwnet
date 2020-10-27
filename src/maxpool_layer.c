@@ -15,15 +15,60 @@ matrix forward_maxpool_layer(layer l, matrix in)
     // Probably don't change this
     free_matrix(*l.x);
     *l.x = copy_matrix(in);
-
+    
     int outw = (l.width-1)/l.stride + 1;
     int outh = (l.height-1)/l.stride + 1;
     matrix out = make_matrix(in.rows, outw*outh*l.channels);
 
     // TODO: 6.1 - iterate over the input and fill in the output with max values
+    int i, j;
+ 
+    // printf("in odd size\n");
+    // printf("in rows: %d\n",in.rows);
+    // printf("in cols: %d\n", in.cols);
+    // printf("size");
+    
+    // printf("%f\n", in.data[0]);
+    // printf("%f\n", in.data[9216]);
+    // printf("done\n");
+
+    // for(int i = 0; i< 9216 ; i++){
+    //     printf("%d : %f \n",  i, in.data[i] );
+    // }
 
 
+    int padding = (l.size -1)/2;
 
+    for(int r=0; r< in.rows; r++){
+            for(int i = 0; i < l.channels ; i++){
+                int in_row = -padding;
+                int  out_row = 0;
+                while (in_row + l.size <= l.height+padding){
+                    int in_column  = -padding;
+                    int out_column = 0;
+                    while(in_column +l.size <= l.width+padding){
+                        float maximum = - INFINITY;
+                        for(int m = in_row; m < in_row + l.size ; m++){
+                            for(int n = in_column; n< in_column +l.size; n++){
+                                if( m >=0 && n>= 0 && m< l.height && n <l.width ){
+                                    if (in.data[ r * (l.width * l.height *l.channels) + i * (l.width * l.height) + m * l.width + n ] > maximum){
+                                        maximum = in.data[  r * (l.width * l.height *l.channels) +  i * (l.width * l.height) + m * l.width + n ];
+                                        
+                                    }
+                                }
+                            }
+                        }
+
+                        out.data[ r* (outw*outh * l.channels) + i * (outw*outh) + out_row * outw + out_column ] = maximum;
+                        in_column = in_column + l.stride;
+                        out_column = out_column + 1;    S
+
+                    }
+                    in_row = in_row + l.stride;
+                    out_row = out_row +1;
+                }
+            }
+        }
     return out;
 }
 
@@ -40,7 +85,45 @@ matrix backward_maxpool_layer(layer l, matrix dy)
     // TODO: 6.2 - find the max values in the input again and fill in the
     // corresponding delta with the delta from the output. This should be
     // similar to the forward method in structure.
+    int padding = (l.size -1)/2;
 
+
+
+
+    for(int r=0; r< in.rows; r++){
+            for(int i = 0; i < l.channels ; i++){
+                int in_row = -padding;
+                int  out_row = 0;
+                while (in_row + l.size <= l.height+padding){
+                    int in_column  = -padding;
+                    int out_column = 0;
+                    while(in_column +l.size <= l.width+padding){
+                        float maximum = - INFINITY;
+                        int maximum_location;
+                        for(int m = in_row; m < in_row + l.size ; m++){
+                            for(int n = in_column; n< in_column +l.size; n++){
+                                if( m >=0 && n>= 0 && m< l.height && n <l.width ){
+                                    if (in.data[  i * (l.width * l.height) + m * l.width + n ] > maximum){
+                                        maximum = in.data[ r * (l.width * l.height *l.channels)+ r * (l.width * l.height *l.channels) +  i * (l.width * l.height) + m * l.width + n ];
+                                        maximum_location =  r * (l.width * l.height *l.channels) +  i * (l.width * l.height) + m * l.width + n ;
+
+                                        
+                                    }
+                                }
+                            }
+                        }
+
+                        //dx.data[ i* (outw*outh) + out_row * outw + out_column ] = maximum;
+                        dx.data[maximum_location] += dy.data[ r* (outw*outh * l.channels)+ i* (outw*outh) + out_row * outw + out_column];
+                        in_column = in_column + l.stride;
+                        out_column = out_column + 1;
+
+                    }
+                    in_row = in_row + l.stride;
+                    out_row = out_row +1;
+                }
+            }
+        }
 
 
     return dx;
