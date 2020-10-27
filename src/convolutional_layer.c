@@ -57,9 +57,9 @@ matrix im2col(image im, int size, int stride)
     // TODO: 5.1
     // Fill in the column matrix with patches from the image
     /* 
-    //VTHOMA- TRIAL1
+    //TRIAL1
     int im_x, im_y, im_c;
-    for(i=0; i<rows; i++)k
+    for(i=0; i<rows; i++)
     {
         for(j=0; j<cols; j++)
         {
@@ -80,8 +80,9 @@ matrix im2col(image im, int size, int stride)
     printf("matrix rows = %d \n", rows);
     printf("matrix cols = %d \n", cols);  
     
+    
+    //TRIAL2
     /*
-    //VTHOMA- TRIAL2
     int mr, mc;
     int l;
     int c;
@@ -95,7 +96,7 @@ matrix im2col(image im, int size, int stride)
                     for(l=-size/2; l<size/2; l++){
                         //printf("mr=%d \n", mr);
                         //printf("mc=%d \n", mc);
-                        if (k+i >0 && l+j>0 && k+i<im.h && l+j<im.w)
+                        if (k+i >=0 && l+j>=0 && k+i<im.h && l+j<im.w)
                             col.data[mr*col.cols + mc] = get_pixel(im, k+i, l+j, c); 
                         else
                             col.data[mr*col.cols + mc] = 0;
@@ -109,25 +110,31 @@ matrix im2col(image im, int size, int stride)
         printf("col.data[34] = %f \n", col.data[34]);
     }
     */
+    
 
-    //VTHOMA-TRIAL3
+    //TRIAL3
     for(k=0; k<rows; k++){
-        int j_o = k%size;
-        int i_o = (k/size)%size;
-        int im_ch = k/size/size;
+        int im_w_o = k%size;
+        int im_h_o = (k/size)%size;
+        int im_ch  = k/(size*size);
 
-        for(i=0; i<outh; i++){
-            for(j=0; j<outw; j++){
-                int im_r = i_o + i*stride;
-                int im_c = j_o + j*stride;
-                if (im_r >0 && im_c>0 && im_r<im.h && im_c<im.w)
-                    col.data[(k*outh + i)*outw + j] = get_pixel(im, im_r, im_c, im_ch);
+        for(i=0; i<outh; i++){ //out image height
+            for(j=0; j<outw; j++){ //out image width
+                int im_r = im_h_o + i*stride;
+                int im_c = im_w_o + j*stride;
+
+                im_r -= (size-1)/2;
+                im_c -= (size-1)/2;
+
+                if(im_r>=0 && im_r<im.h && im_c>=0 && im_c<im.w)
+                    col.data[(k*outh + i)*outw + j] = get_pixel(im, im_c, im_r, im_ch);//im.data[(im_ch*im.h + im_r)*im.w + im_c];
                 else    
                     col.data[(k*outh + i)*outw + j] = 0;
             }
         }
-    }
  
+    }
+  
     return col;
 }
 
