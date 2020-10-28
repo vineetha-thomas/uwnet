@@ -9,7 +9,9 @@ def conv_net():
             make_maxpool_layer(8, 8, 32, 3, 2),
             make_convolutional_layer(4, 4, 32, 64, 3, 1, LRELU),
             make_maxpool_layer(4, 4, 64, 3, 2),
-            make_connected_layer(256, 10, SOFTMAX)]
+            make_connected_layer(256, 10), 
+            make_activation_layer(SOFTMAX)]
+            #make_connected_layer(256, 10, SOFTMAX)]
     return make_net(l)
 
 print("loading data...")

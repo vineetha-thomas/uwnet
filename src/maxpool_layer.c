@@ -61,7 +61,7 @@ matrix forward_maxpool_layer(layer l, matrix in)
 
                         out.data[ r* (outw*outh * l.channels) + i * (outw*outh) + out_row * outw + out_column ] = maximum;
                         in_column = in_column + l.stride;
-                        out_column = out_column + 1;    S
+                        out_column = out_column + 1;
 
                     }
                     in_row = in_row + l.stride;
@@ -103,8 +103,8 @@ matrix backward_maxpool_layer(layer l, matrix dy)
                         for(int m = in_row; m < in_row + l.size ; m++){
                             for(int n = in_column; n< in_column +l.size; n++){
                                 if( m >=0 && n>= 0 && m< l.height && n <l.width ){
-                                    if (in.data[  i * (l.width * l.height) + m * l.width + n ] > maximum){
-                                        maximum = in.data[ r * (l.width * l.height *l.channels)+ r * (l.width * l.height *l.channels) +  i * (l.width * l.height) + m * l.width + n ];
+                                    if (in.data[  r * (l.width * l.height *l.channels) +i * (l.width * l.height) + m * l.width + n ] > maximum){
+                                        maximum = in.data[  r * (l.width * l.height *l.channels) +  i * (l.width * l.height) + m * l.width + n ];
                                         maximum_location =  r * (l.width * l.height *l.channels) +  i * (l.width * l.height) + m * l.width + n ;
 
                                         
@@ -114,7 +114,7 @@ matrix backward_maxpool_layer(layer l, matrix dy)
                         }
 
                         //dx.data[ i* (outw*outh) + out_row * outw + out_column ] = maximum;
-                        dx.data[maximum_location] += dy.data[ r* (outw*outh * l.channels)+ i* (outw*outh) + out_row * outw + out_column];
+                        dx.data[maximum_location] += dy.data[  r * (outw*outh * l.channels) + i* (outw*outh) + out_row * outw + out_column];
                         in_column = in_column + l.stride;
                         out_column = out_column + 1;
 
