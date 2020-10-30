@@ -1,7 +1,9 @@
 from uwnet import *
 
 def conv_net():
-    l = [   make_convolutional_layer(32, 32, 3, 8, 3, 1, LRELU),
+    l = [   
+            # CNN
+            make_convolutional_layer(32, 32, 3, 8, 3, 1, LRELU),
             make_maxpool_layer(32, 32, 8, 3, 2),
             make_convolutional_layer(16, 16, 8, 16, 3, 1, LRELU),
             make_maxpool_layer(16, 16, 16, 3, 2),
@@ -11,7 +13,29 @@ def conv_net():
             make_maxpool_layer(4, 4, 64, 3, 2),
             make_connected_layer(256, 10), 
             make_activation_layer(SOFTMAX)]
-            #make_connected_layer(256, 10, SOFTMAX)]
+
+
+    return make_net(l)
+
+
+def linear_net():
+    l = [
+
+            # FULLY CONNECTED
+            make_connected_layer(32 * 32 * 3, 8 * 3 * 3 ), 
+            make_activation_layer(LRELU),
+
+            make_connected_layer(8 * 3 * 3 , 16 * 16 * 16), 
+            make_activation_layer(LRELU),
+
+            make_connected_layer( 16 * 16 * 16, 8 * 3 * 3), 
+            make_activation_layer(LRELU),
+
+            make_connected_layer(  8 * 3 * 3, 3628), 
+            make_activation_layer(LRELU),
+
+            make_connected_layer(  3628, 10), 
+            make_activation_layer(SOFTMAX)]
     return make_net(l)
 
 print("loading data...")
@@ -27,7 +51,8 @@ rate = .01
 momentum = .9
 decay = .005
 
-m = conv_net()
+#m = conv_net()
+m = linear_net()
 print("training...")
 train_image_classifier(m, train, batch, iters, rate, momentum, decay)
 print("done")
@@ -36,6 +61,10 @@ print
 print("evaluating model...")
 print("training accuracy: %f", accuracy_net(m, train))
 print("test accuracy:     %f", accuracy_net(m, test))
+
+
+
+
 
 # How accurate is the fully connected network vs the convnet when they use similar number of operations?
 # Why are you seeing these results? Speculate based on the information you've gathered and what you know about DL and ML.
